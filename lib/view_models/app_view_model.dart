@@ -31,6 +31,10 @@ class AppViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteTask(int taskIndex) {
+    tasks.removeAt(taskIndex);
+  }
+
   void bottomSheetBuilder(Widget bottomSheetView, BuildContext context) {
     showModalBottomSheet(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
