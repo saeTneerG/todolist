@@ -15,6 +15,8 @@ class AppViewModel extends ChangeNotifier {
 
   int get numTasksRemaining => tasks.where((task) => !task.complete).length;
 
+  String get username => user.username;
+
   void addTask(Task newTask) {
     tasks.add(newTask);
     notifyListeners();
@@ -35,6 +37,21 @@ class AppViewModel extends ChangeNotifier {
 
   void deleteTask(int taskIndex) {
     tasks.removeAt(taskIndex);
+    notifyListeners();
+  }
+
+  void updateUsername(String newUsername) {
+    user.username = newUsername;
+    notifyListeners();
+  }
+
+  void deleteAllTasks() {
+    tasks.clear();
+    notifyListeners();
+  }
+
+  void deleteCompletedTasks() {
+    tasks.removeWhere((task) => task.complete);
     notifyListeners();
   }
 
