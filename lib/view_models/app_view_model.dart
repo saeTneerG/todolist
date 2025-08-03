@@ -33,6 +33,7 @@ class AppViewModel extends ChangeNotifier {
 
   void deleteTask(int taskIndex) {
     tasks.removeAt(taskIndex);
+    notifyListeners();
   }
 
   void bottomSheetBuilder(Widget bottomSheetView, BuildContext context) {
