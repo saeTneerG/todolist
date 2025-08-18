@@ -30,6 +30,10 @@ class AppViewModel extends ChangeNotifier {
     return tasks[taskIndex].title;
   }
 
+  String getTaskDescription(int taskIndex) {
+    return tasks[taskIndex].description;
+  }
+
   void setTaskValue(int taskIndex, bool taskValue) {
     tasks[taskIndex].complete = taskValue;
     notifyListeners();
@@ -45,6 +49,11 @@ class AppViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateTaskName(int taskIndex, String newTaskTitle) {
+    tasks[taskIndex].title = newTaskTitle;
+    notifyListeners();
+  }
+
   void deleteAllTasks() {
     tasks.clear();
     notifyListeners();
@@ -52,6 +61,12 @@ class AppViewModel extends ChangeNotifier {
 
   void deleteCompletedTasks() {
     tasks.removeWhere((task) => task.complete);
+    notifyListeners();
+  }
+
+  void updateTask(int taskIndex, String newTaskTitle, String newTaskDescription){
+    tasks[taskIndex].title = newTaskTitle;
+    tasks[taskIndex].description = newTaskDescription;
     notifyListeners();
   }
 

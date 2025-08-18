@@ -72,7 +72,7 @@ class HeaderView extends StatelessWidget {
                 ),
               ),
             ),
-            // Setting Icon
+            // Login Icon
             Expanded(
               flex: 1,
               child: InkWell(
@@ -80,7 +80,7 @@ class HeaderView extends StatelessWidget {
                   viewModel.bottomSheetBuilder(SettingBottomSheetView(), context);
                 },
                 child: Icon(
-                  Icons.settings,
+                  Icons.login,
                   color: viewModel.colorLevel3,
                   size: 40,
                 ),
