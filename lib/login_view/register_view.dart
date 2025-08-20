@@ -11,18 +11,25 @@ class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
 
   @override
-  State<Register> createState() => _registerState();
+  State<Register> createState() => RegisterState();
 }
 
-class _registerState extends State<Register> {
-  @override
+class RegisterState extends State<Register> {
   final formKey = GlobalKey<FormState>();
 
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController pass = TextEditingController();
 
+  String? emailMessageError;
+  bool isLoading = false;
+
   Future sign_up() async {
+
+    setState(() {
+      emailMessageError = null;
+      isLoading = true;
+    });
     String url = 'http://10.0.2.2/todolist/register.php';
     final response = await http.post(Uri.parse(url), body: {
       "name": name.text,
@@ -31,7 +38,11 @@ class _registerState extends State<Register> {
     });
     var data = json.decode(response.body);
     if (data.contains("Email already exists")) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Register()));
+      setState(() {
+        emailMessageError = "This email already exists.";
+        isLoading = false;
+      });
+      formKey.currentState!.validate();
     } else {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskPage()));
     }
@@ -56,6 +67,7 @@ class _registerState extends State<Register> {
                   const SizedBox(
                     height: 30,
                   ),
+                  // Name field
                   SizedBox(
                     width: 350,
                     child: TextFormField(
@@ -76,6 +88,7 @@ class _registerState extends State<Register> {
                   const SizedBox(
                     height: 20,
                   ),
+                  // Email field
                   SizedBox(
                     width: 350,
                     child: TextFormField(
@@ -87,15 +100,25 @@ class _registerState extends State<Register> {
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Please enter email.';
+                        } else if (emailMessageError != null) {
+                          return emailMessageError;
                         }
                         return null;
                       },
                       controller: email,
+                      onChanged: (value) {
+                        if (emailMessageError != null) {
+                          setState(() {
+                            emailMessageError = null;
+                          });
+                        }
+                      },
                     ),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
+                  // Password field
                   SizedBox(
                     width: 350,
                     child: TextFormField(
@@ -116,21 +139,24 @@ class _registerState extends State<Register> {
                   const SizedBox(
                     height: 20,
                   ),
+                  // Confirm Password field
                   SizedBox(
                     width: 350,
                     child: TextFormField(
                       obscureText: true,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Re-Type your Password',
+                        labelText: 'Confirm your Password',
                       ),
                       validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter password again.';
-                        } else if (value != pass.text) {
-                          return 'Password does not match.';
+                        if (pass.text.isNotEmpty) {
+                          if (value!.isEmpty) {
+                            return 'Please enter your password again.';
+                          } else if (value != pass.text) {
+                            return 'Password does not match.';
+                          }
+                          return null;
                         }
-                        return null;
                       },
                     ),
                   ),
@@ -146,13 +172,15 @@ class _registerState extends State<Register> {
                           foregroundColor: AppViewModel().colorLevel1,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15))),
-                      onPressed: () {
+                      onPressed: isLoading ? null : () {
                         bool pass = formKey.currentState!.validate();
                         if (pass) {
                           sign_up();
                         }
                       },
-                      child: const Text(
+                      child: isLoading ? CircularProgressIndicator(
+                        color: AppViewModel().colorLevel1,
+                      ) : const Text(
                         'Sign up',
                         style: TextStyle(
                           fontSize: 20,
