@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:todolist/login_view/login_view.dart';
 import 'bottom_sheets/setting_bottom_sheet_view.dart';
-
 import '../../view_models/app_view_model.dart';
 import 'bottom_sheets/delete_bottom_sheet_view.dart';
 
@@ -63,7 +63,7 @@ class HeaderView extends StatelessWidget {
             Expanded(
               flex: 1,
               child: InkWell(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(5),
                 onTap: () {
                   viewModel.bottomSheetBuilder(DeleteBottomSheetView(), context);
                 },
