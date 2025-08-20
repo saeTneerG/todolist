@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
-import '../view_models/app_view_model.dart';
+import '../../view_models/app_view_model.dart';
 
 class TaskInfoView extends StatelessWidget {
   const TaskInfoView({super.key});
@@ -49,6 +49,7 @@ class TaskInfoView extends StatelessWidget {
             ),
           ),
             SizedBox(width: 20),
+
             // Remaining Tasks
             Expanded(
               flex: 1,

@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../view_models/app_view_model.dart';
+import '../../view_models/app_view_model.dart';
 
 class TaskDetailPage extends StatefulWidget {
   final int index;
@@ -47,7 +46,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
     final viewModel = Provider.of<AppViewModel>(context, listen: false);
 
     return Scaffold(
-      appBar: AppBar(title: Text("Task Information")),
+      appBar: AppBar(title: Text("Task Detail")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -70,12 +69,23 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: viewModel.colorLevel3,
+                foregroundColor: viewModel.colorLevel1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
               onPressed: () {
-                viewModel.updateTask(widget.index, _titleController.text, _descController.text);
+                viewModel.updateTask(
+                  widget.index,
+                  _titleController.text,
+                  _descController.text,
+                );
                 Navigator.pop(context);
               },
               child: Text("Save"),
-            )
+            ),
           ],
         ),
       ),

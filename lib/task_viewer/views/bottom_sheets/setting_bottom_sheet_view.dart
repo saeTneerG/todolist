@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todolist/view_models/app_view_model.dart';
-
-import '../../models/task_model.dart';
+import '../../../view_models/app_view_model.dart';
 
 class SettingBottomSheetView extends StatelessWidget {
   const SettingBottomSheetView({super.key});

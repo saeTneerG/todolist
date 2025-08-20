@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:todolist/views/add_task_view.dart';
-import 'package:todolist/views/header_view.dart';
-import 'package:todolist/views/task_info_view.dart';
-import 'package:todolist/views/task_list_view.dart';
+import 'add_task_view.dart';
+import 'header_view.dart';
+import 'task_info_view.dart';
+import 'task_list_view.dart';
 
 class TaskPage extends StatelessWidget {
   const TaskPage ({super.key});
@@ -11,6 +11,7 @@ class TaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         bottom: false,
         child: Column(children: [
@@ -22,7 +23,6 @@ class TaskPage extends StatelessWidget {
 
           // Task List View
           Expanded(flex: 7, child: TaskListView()),
-        
         ],),
       ),
       floatingActionButton: const AddTaskView(),
