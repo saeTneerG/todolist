@@ -1,8 +1,10 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:todolist/login_view/register_view.dart';
 import '../../view_models/app_view_model.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import '../task_viewer/views/task_page.dart';
 
@@ -10,17 +12,53 @@ class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
   @override
-  State<Login> createState() => _loginState();
+  State<Login> createState() => LoginState();
 }
 
-class _loginState extends State<Login> {
-  @override
+class LoginState extends State<Login> {
+  final formKey = GlobalKey<FormState>();
 
+  TextEditingController email = TextEditingController();
+  TextEditingController pass = TextEditingController();
+
+  String? errorMessage;
+  bool isLoading = false;
+
+  Future sign_in() async {
+    setState(() {
+      errorMessage = null;
+      isLoading = true;
+    });
+    String url = 'http://10.0.2.2/todolist/login.php';
+    final response = await http.post(Uri.parse(url), body: {
+      "email": email.text,
+      "password": pass.text,
+    });
+    var data = json.decode(response.body);
+    if (data.contains("Not found")) {
+      setState(() {
+        errorMessage = "Email not found";
+        isLoading = false;
+      });
+      formKey.currentState!.validate();
+    } else if (data.contains("Wrong password")) {
+      setState(() {
+        errorMessage = "Wrong password";
+        isLoading = false;
+      });
+      formKey.currentState!.validate();
+    } else {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => TaskPage()));
+    }
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppViewModel().colorLevel2,
       body: Center(
         child: Form(
+          key: formKey,
           child: ListView(
             shrinkWrap: true,
             children: [
@@ -35,16 +73,31 @@ class _loginState extends State<Login> {
                     height: 30,
                   ),
                   SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
                     width: 350,
                     child: TextFormField(
                       obscureText: false,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Email or Username',
+                        labelText: 'Email',
                       ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter email.';
+                        } else if (errorMessage != null) {
+                          return 'Wrong password/email';
+                        } else if (!EmailValidator.validate(value)) {
+                          return 'Please enter valid email.';
+                        }
+                        return null;
+                      },
+                      controller: email,
+                      onChanged: (value) {
+                        if (errorMessage != null) {
+                          setState(() {
+                            errorMessage = null;
+                          });
+                        }
+                      },
                     ),
                   ),
                   SizedBox(
@@ -58,6 +111,22 @@ class _loginState extends State<Login> {
                         border: OutlineInputBorder(),
                         labelText: 'Password',
                       ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter password.';
+                        } else if (errorMessage != null) {
+                          return 'Wrong password/email';
+                        }
+                        return null;
+                      },
+                      controller: pass,
+                      onChanged: (value) {
+                        if (errorMessage != null) {
+                          setState(() {
+                            errorMessage = null;
+                          });
+                        }
+                      }
                     ),
                   ),
                   SizedBox(
@@ -72,10 +141,15 @@ class _loginState extends State<Login> {
                           foregroundColor: AppViewModel().colorLevel1,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15))),
-                      onPressed: () {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskPage()));
+                      onPressed: isLoading ? null : () {
+                        bool pass = formKey.currentState!.validate();
+                        if (pass) {
+                          sign_in();
+                        }
                       },
-                      child: const Text(
+                      child: isLoading ? CircularProgressIndicator(
+                          color: AppViewModel().colorLevel1,
+                      ):const Text(
                         'Sign in',
                         style: TextStyle(
                           fontSize: 20,

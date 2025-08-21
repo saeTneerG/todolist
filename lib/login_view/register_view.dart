@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -102,6 +103,8 @@ class RegisterState extends State<Register> {
                           return 'Please enter email.';
                         } else if (emailMessageError != null) {
                           return emailMessageError;
+                        } else if (!EmailValidator.validate(value)) {
+                          return 'Please enter valid email.';
                         }
                         return null;
                       },
