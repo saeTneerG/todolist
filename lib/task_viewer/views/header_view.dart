@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:todolist/login_view/login_view.dart';
-import 'bottom_sheets/setting_bottom_sheet_view.dart';
 import '../../view_models/app_view_model.dart';
+import '../models/user_model.dart';
 import 'bottom_sheets/delete_bottom_sheet_view.dart';
 
 class HeaderView extends StatelessWidget {
   const HeaderView({super.key});
+
+  Future signOut (BuildContext context) async {
+    User.clearUser();
+    User.setSignIn(false);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +85,7 @@ class HeaderView extends StatelessWidget {
               flex: 1,
               child: InkWell(
                 borderRadius: BorderRadius.circular(20),
-                onTap: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
-                },
+                onTap: () => signOut(context),
                 child: Icon(
                   Icons.logout,
                   color: viewModel.colorLevel3,

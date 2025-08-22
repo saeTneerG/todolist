@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../task_viewer/models/user_model.dart';
 import '../task_viewer/views/task_page.dart';
 
 class Login extends StatefulWidget {
@@ -48,8 +49,8 @@ class LoginState extends State<Login> {
       });
       formKey.currentState!.validate();
     } else {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => TaskPage()));
+      await User.setSignIn(true);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskPage()));
     }
   }
   @override

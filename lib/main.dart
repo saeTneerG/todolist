@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todolist/task_viewer/views/task_page.dart';
-import 'login_view/login_view.dart';
-import 'login_view/register_view.dart';
+import 'package:todolist/view_models/login_view_model.dart';
 import 'view_models/app_view_model.dart';
 
 void main() {
@@ -16,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Login(),
+      home: CheckLoginState(),
       debugShowCheckedModeBanner: false,
     );
   }

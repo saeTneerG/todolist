@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../view_models/app_view_model.dart';
+import '../task_viewer/models/user_model.dart';
 import '../task_viewer/views/task_page.dart';
 import 'login_view.dart';
 
@@ -45,6 +46,7 @@ class RegisterState extends State<Register> {
       });
       formKey.currentState!.validate();
     } else {
+      await User.setSignIn(true);
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskPage()));
     }
   }
