@@ -1,5 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todolist/login_view/register_view.dart';
 import '../../view_models/app_view_model.dart';
 import 'dart:async';
@@ -31,28 +32,39 @@ class LoginState extends State<Login> {
       isLoading = true;
     });
     String url = 'http://10.0.2.2/todolist/login.php';
-    final response = await http.post(Uri.parse(url), body: {
-      "email": email.text,
-      "password": pass.text,
-    });
-    var data = json.decode(response.body);
-    if (data.contains("Not found")) {
-      setState(() {
-        errorMessage = "Email not found";
-        isLoading = false;
-      });
-      formKey.currentState!.validate();
-    } else if (data.contains("Wrong password")) {
-      setState(() {
-        errorMessage = "Wrong password";
-        isLoading = false;
-      });
-      formKey.currentState!.validate();
-    } else {
+    final response = await http.post(
+      Uri.parse(url),
+      body: {"email": email.text, "password": pass.text},
+    );
+    print(response.body);
+    var responseData = json.decode(response.body);
+
+    if (responseData['status'] == 'success') {
+      var userData = responseData['data'];
+
+      final viewModel = Provider.of<AppViewModel>(context, listen: false);
+      viewModel.setUserData(
+        userId: userData['user_id'].toString(),
+        username: userData['name']?.toString() ?? "user",
+        email: userData['email']?.toString() ?? email.text,
+      );
+
       await User.setSignIn(true);
+      await User.setUserData(
+        userId: userData['user_id'].toString(),
+        username: userData['name']?.toString() ?? "user",
+        email: userData['email']?.toString() ?? email.text,
+      );
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskPage()));
+    } else {
+      setState(() {
+        errorMessage = responseData['message'].toString();
+        isLoading = false;
+      });
+      formKey.currentState!.validate();
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,9 +82,7 @@ class LoginState extends State<Login> {
                     'Welcome !',
                     style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(
-                    height: 30,
-                  ),
+                  SizedBox(height: 30),
                   SizedBox(
                     width: 350,
                     child: TextFormField(
@@ -101,9 +111,7 @@ class LoginState extends State<Login> {
                       },
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  SizedBox(height: 20),
                   SizedBox(
                     width: 350,
                     child: TextFormField(
@@ -127,36 +135,40 @@ class LoginState extends State<Login> {
                             errorMessage = null;
                           });
                         }
-                      }
+                      },
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  SizedBox(height: 20),
                   SizedBox(
                     width: 350,
                     height: 60,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: AppViewModel().colorLevel3,
-                          foregroundColor: AppViewModel().colorLevel1,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15))),
-                      onPressed: isLoading ? null : () {
-                        bool pass = formKey.currentState!.validate();
-                        if (pass) {
-                          sign_in();
-                        }
-                      },
-                      child: isLoading ? CircularProgressIndicator(
-                          color: AppViewModel().colorLevel1,
-                      ):const Text(
-                        'Sign in',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                        backgroundColor: AppViewModel().colorLevel3,
+                        foregroundColor: AppViewModel().colorLevel1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
+                      onPressed: isLoading
+                          ? null
+                          : () {
+                              bool pass = formKey.currentState!.validate();
+                              if (pass) {
+                                sign_in();
+                              }
+                            },
+                      child: isLoading
+                          ? CircularProgressIndicator(
+                              color: AppViewModel().colorLevel1,
+                            )
+                          : const Text(
+                              'Sign in',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                   TextButton(
@@ -164,7 +176,10 @@ class LoginState extends State<Login> {
                       textStyle: const TextStyle(fontSize: 15),
                     ),
                     onPressed: () {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Register()));
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => Register()),
+                      );
                     },
                     child: const Text("Didn't have any Account? Sign Up now"),
                   ),

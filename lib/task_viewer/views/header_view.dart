@@ -10,7 +10,7 @@ class HeaderView extends StatelessWidget {
   const HeaderView({super.key});
 
   Future signOut (BuildContext context) async {
-    User.clearUser();
+    User.clearUserData();
     User.setSignIn(false);
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
   }

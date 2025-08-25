@@ -4,7 +4,7 @@ import '../task_viewer/models/user_model.dart';
 
 class AppViewModel extends ChangeNotifier {
   List<Task> tasks = <Task>[];
-  User user = User("John Doe", "");
+  User user = User("", "user", "");
 
   Color colorLevel1 = Colors.grey.shade50;
   Color colorLevel2 = Colors.grey.shade200;
@@ -39,13 +39,34 @@ class AppViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteTask(int taskIndex) {
-    tasks.removeAt(taskIndex);
+  void setUserData({
+    required String userId,
+    required String username,
+    required String email,
+}) {
+    user.userId = userId;
+    user.username = username;
+    user.email = email;
     notifyListeners();
   }
 
-  void updateUsername(String newUsername) {
-    user.username = newUsername;
+  void clearUserData() {
+    user = User("","user", "");
+    tasks.clear();
+    notifyListeners();
+  }
+
+  Future<void> loadUserData() async {
+    final userData = await User.getUserData();
+    if (userData != null) {
+      user.username = userData['username'] ?? "user";
+      user.email = userData['email'] ?? "";
+    }
+    notifyListeners();
+  }
+
+  void deleteTask(int taskIndex) {
+    tasks.removeAt(taskIndex);
     notifyListeners();
   }
 
