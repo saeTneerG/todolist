@@ -10,8 +10,11 @@ class HeaderView extends StatelessWidget {
   const HeaderView({super.key});
 
   Future signOut (BuildContext context) async {
+    final viewModel = Provider.of<AppViewModel>(context, listen: false);
     User.clearUserData();
     User.setSignIn(false);
+    viewModel.deleteAllTasks();
+    viewModel.clearUserData();
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
   }
 

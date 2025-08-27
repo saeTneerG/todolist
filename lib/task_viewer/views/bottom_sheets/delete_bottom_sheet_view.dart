@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../view_models/app_view_model.dart';
+import '../../models/task_service_model.dart';
 
 class DeleteBottomSheetView extends StatelessWidget {
   const DeleteBottomSheetView({super.key});
@@ -17,6 +18,7 @@ class DeleteBottomSheetView extends StatelessWidget {
             children: [
               ElevatedButton(
                 onPressed: () {
+                  TaskService.deleteAllTasks(viewModel.user.userId);
                   viewModel.deleteAllTasks();
                   Navigator.of(context).pop();
                 },
@@ -37,6 +39,7 @@ class DeleteBottomSheetView extends StatelessWidget {
               SizedBox(width: 15,),
               ElevatedButton(
                 onPressed: () {
+                  TaskService.deleteCompletedTasks(viewModel.user.userId);
                   viewModel.deleteCompletedTasks();
                   Navigator.of(context).pop();
                 },

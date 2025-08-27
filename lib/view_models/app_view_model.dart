@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../task_viewer/models/task_model.dart';
+import '../task_viewer/models/task_service_model.dart';
 import '../task_viewer/models/user_model.dart';
 
 class AppViewModel extends ChangeNotifier {
@@ -59,19 +60,25 @@ class AppViewModel extends ChangeNotifier {
   Future<void> loadUserData() async {
     final userData = await User.getUserData();
     if (userData != null) {
+      user.userId = userData['userId'] ?? "";
       user.username = userData['username'] ?? "user";
       user.email = userData['email'] ?? "";
     }
     notifyListeners();
   }
 
-  void deleteTask(int taskIndex) {
-    tasks.removeAt(taskIndex);
+  Future<void> loadTasks() async {
+    final tasksData = await TaskService.getTasks(user.userId);
+    print("Task Data: $tasksData");
+    if (tasksData['status'] == 'success') {
+      tasks.clear();
+      tasks.addAll(tasksData['tasks']);
+    }
     notifyListeners();
   }
 
-  void updateTaskName(int taskIndex, String newTaskTitle) {
-    tasks[taskIndex].title = newTaskTitle;
+  void deleteTask(int taskIndex) {
+    tasks.removeAt(taskIndex);
     notifyListeners();
   }
 

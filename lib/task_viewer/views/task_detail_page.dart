@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../view_models/app_view_model.dart';
+import '../models/task_service_model.dart';
 
 class TaskDetailPage extends StatefulWidget {
   final int index;
@@ -77,6 +78,13 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                 ),
               ),
               onPressed: () {
+                TaskService.updateTask(
+                  taskId: viewModel.tasks[widget.index].taskId,
+                  userId: viewModel.user.userId,
+                  title: _titleController.text,
+                  description: _descController.text,
+                  complete: null,
+                );
                 viewModel.updateTask(
                   widget.index,
                   _titleController.text,

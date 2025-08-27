@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 import '../../view_models/app_view_model.dart';
 import '../task_viewer/models/user_model.dart';
@@ -32,6 +33,9 @@ class RegisterState extends State<Register> {
       emailMessageError = null;
       isLoading = true;
     });
+    print("name: ${name.text}");
+    print("email: ${email.text}");
+    print("pass: ${pass.text}");
     String url = 'http://10.0.2.2/todolist/register.php';
     final response = await http.post(Uri.parse(url), body: {
       "name": name.text,
@@ -39,7 +43,9 @@ class RegisterState extends State<Register> {
       "email": email.text,
     });
     var data = json.decode(response.body);
-    if (data.contains("Email already exists")) {
+    print("data: $data");
+
+    if (data['message'] == 'Email already exists.') {
       setState(() {
         emailMessageError = "This email already exists.";
         isLoading = false;
@@ -47,6 +53,17 @@ class RegisterState extends State<Register> {
       formKey.currentState!.validate();
     } else {
       await User.setSignIn(true);
+      final viewModel = Provider.of<AppViewModel>(context, listen: false);
+      viewModel.setUserData(
+        userId: data['data']['user_id'].toString(),
+        username: data['data']['name']?.toString() ?? "user",
+        email: data['data']['email']?.toString() ?? "email",
+      );
+      await User.setUserData(
+        userId: data['user_id'].toString(),
+        username: data['name']?.toString() ?? "user",
+        email: data['email']?.toString() ?? email.text,
+      );
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskPage()));
     }
   }
