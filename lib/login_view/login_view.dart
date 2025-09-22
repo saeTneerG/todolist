@@ -55,7 +55,10 @@ class LoginState extends State<Login> {
         username: userData['name']?.toString() ?? "user",
         email: userData['email']?.toString() ?? email.text,
       );
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskPage()));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => TaskPage()),
+      );
     } else {
       setState(() {
         errorMessage = responseData['message'].toString();
@@ -191,4 +194,5 @@ class LoginState extends State<Login> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+
 }
