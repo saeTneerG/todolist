@@ -36,6 +36,7 @@ class TaskService {
     final response = await http.get(
       Uri.parse('$baseUrl/get_task.php?user_id=$userId'),
     );
+    print(response.body);
 
     if (response.statusCode == 200) {
       var responseData = json.decode(response.body);

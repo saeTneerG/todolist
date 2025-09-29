@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 
 import '../../view_models/app_view_model.dart';
 import '../task_viewer/models/user_model.dart';
-import '../task_viewer/views/task_page.dart';
 import 'login_view.dart';
 
 class Register extends StatefulWidget {
@@ -42,29 +41,42 @@ class RegisterState extends State<Register> {
       "password": pass.text,
       "email": email.text,
     });
+    print(response.body);
     var data = json.decode(response.body);
-    print("data: $data");
 
-    if (data['message'] == 'Email already exists.') {
-      setState(() {
-        emailMessageError = "This email already exists.";
-        isLoading = false;
-      });
-      formKey.currentState!.validate();
+    if (data['status'].toString().trim().contains('error')) {
+      if (data['message'].trim().contains('Email already exists')) {
+        setState(() {
+          emailMessageError = "This email already exists.";
+          isLoading = false;
+        });
+        formKey.currentState!.validate();
+      }
+      if (data['message'].trim().contains('Failed to send confirmation email')) {
+        setState(() {
+          emailMessageError = data['message'];
+          isLoading = false;
+        });
+        formKey.currentState!.validate();
+      }
     } else {
-      await User.setSignIn(true);
-      final viewModel = Provider.of<AppViewModel>(context, listen: false);
-      viewModel.setUserData(
-        userId: data['data']['user_id'].toString(),
-        username: data['data']['name']?.toString() ?? "user",
-        email: data['data']['email']?.toString() ?? "email",
+      showDialog(
+          context: context,
+          builder: (BuildContext context){
+            return AlertDialog(
+              title: Text("Registration Successful"),
+              content: Text("Please check your email to activate your account."),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+                    },
+                    child: Text("OK"))
+              ],
+            );
+          }
       );
-      await User.setUserData(
-        userId: data['user_id'].toString(),
-        username: data['name']?.toString() ?? "user",
-        email: data['email']?.toString() ?? email.text,
-      );
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TaskPage()));
     }
   }
 
@@ -120,10 +132,10 @@ class RegisterState extends State<Register> {
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Please enter email.';
-                        } else if (emailMessageError != null) {
-                          return emailMessageError;
                         } else if (!EmailValidator.validate(value)) {
                           return 'Please enter valid email.';
+                        } else if (emailMessageError != null) {
+                          return emailMessageError;
                         }
                         return null;
                       },

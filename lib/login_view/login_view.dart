@@ -39,7 +39,7 @@ class LoginState extends State<Login> {
     print(response.body);
     var responseData = json.decode(response.body);
 
-    if (responseData['status'] == 'success') {
+    if (responseData['status'].trim().contains('success')) {
       var userData = responseData['data'];
 
       final viewModel = Provider.of<AppViewModel>(context, listen: false);
@@ -98,7 +98,7 @@ class LoginState extends State<Login> {
                         if (value!.isEmpty) {
                           return 'Please enter email.';
                         } else if (errorMessage != null) {
-                          return 'Wrong password/email';
+                          return errorMessage;
                         } else if (!EmailValidator.validate(value)) {
                           return 'Please enter valid email.';
                         }
@@ -126,8 +126,8 @@ class LoginState extends State<Login> {
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Please enter password.';
-                        } else if (errorMessage != null) {
-                          return 'Wrong password/email';
+                        } else if (errorMessage != null && !errorMessage!.contains('Account not activated')) {
+                          return errorMessage;
                         }
                         return null;
                       },
