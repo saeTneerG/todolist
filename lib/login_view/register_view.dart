@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
 import '../../view_models/app_view_model.dart';
-import '../task_viewer/models/user_model.dart';
 import 'login_view.dart';
 
 class Register extends StatefulWidget {
@@ -35,7 +33,7 @@ class RegisterState extends State<Register> {
     print("name: ${name.text}");
     print("email: ${email.text}");
     print("pass: ${pass.text}");
-    String url = 'http://10.0.2.2/todolist/register.php';
+    String url = 'http://10.0.2.2/todolist-api/register.php';
     final response = await http.post(Uri.parse(url), body: {
       "name": name.text,
       "password": pass.text,
@@ -207,6 +205,7 @@ class RegisterState extends State<Register> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15))),
                       onPressed: isLoading ? null : () {
+                        FocusScope.of(context).unfocus();
                         bool pass = formKey.currentState!.validate();
                         if (pass) {
                           sign_up();

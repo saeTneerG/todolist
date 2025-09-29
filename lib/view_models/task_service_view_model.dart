@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:todolist/task_viewer/models/task_model.dart';
 
 class TaskService {
-  static const String baseUrl = 'http://10.0.2.2/todolist';
+  static const String baseUrl = 'http://10.0.2.2/todolist-api';
 
   static Future<Map<String, dynamic>> createTask({
     required String userId,

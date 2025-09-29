@@ -31,7 +31,7 @@ class LoginState extends State<Login> {
       errorMessage = null;
       isLoading = true;
     });
-    String url = 'http://10.0.2.2/todolist/login.php';
+    String url = 'http://10.0.2.2/todolist-api/login.php';
     final response = await http.post(
       Uri.parse(url),
       body: {"email": email.text, "password": pass.text},
@@ -157,6 +157,7 @@ class LoginState extends State<Login> {
                           ? null
                           : () {
                               bool pass = formKey.currentState!.validate();
+                              FocusScope.of(context).unfocus();
                               if (pass) {
                                 sign_in();
                               }

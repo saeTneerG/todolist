@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../task_viewer/models/task_model.dart';
-import '../task_viewer/models/task_service_model.dart';
+import 'task_service_view_model.dart';
 import '../task_viewer/models/user_model.dart';
 
 class AppViewModel extends ChangeNotifier {
